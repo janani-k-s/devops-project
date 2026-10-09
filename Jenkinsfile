@@ -2,6 +2,16 @@ pipeline {
     agent any
 
     stages {
+        stage('AWS Authentication Check') {
+    steps {
+        withCredentials([
+            string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
+            string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
+        ]) {
+            bat 'aws sts get-caller-identity'
+        }
+    }
+}
         stage('Checkout') {
             steps {
                 checkout scm
