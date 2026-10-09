@@ -72,7 +72,7 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Deploy to EC2') {
             steps {
                 withCredentials([
@@ -88,6 +88,9 @@ pipeline {
                     )
                 ]) {
                     bat '''
+                        powershell -NoProfile -Command "$key = $env:SSH_KEY; icacls $key /inheritance:r; icacls $key /grant:r 'SYSTEM:F' 'Administrators:F'; icacls $key /remove 'BUILTIN\\Users' 'Everyone' 2>$null"
+                        if errorlevel 1 exit /b 1
+
                         powershell -NoProfile -Command "$env:GHCR_TOKEN | ssh -o StrictHostKeyChecking=no -i $env:SSH_KEY $env:SSH_USER@$env:EC2_HOST 'sudo docker login ghcr.io -u janani-k-s --password-stdin'"
                         if errorlevel 1 exit /b 1
 
@@ -101,5 +104,7 @@ pipeline {
                 }
             }
         }
+
+
     }
 }
