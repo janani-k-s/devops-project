@@ -25,6 +25,16 @@ pipeline {
                 bat 'terraform validate'
             }
         }
+        stage('Terraform Plan') {
+    steps {
+        withCredentials([
+            string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
+            string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
+        ]) {
+            bat 'set AWS_DEFAULT_REGION=us-east-1 && terraform plan -input=false'
+        }
+    }
+}
 
         stage('Docker Build') {
             steps {
