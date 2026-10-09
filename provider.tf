@@ -11,3 +11,8 @@ terraform {
 provider "aws" {
   region = "us-east-1"
 }
+
+variable "ssh_allowed_cidr" {
+  description = "Public IPv4 CIDR allowed to SSH into EC2"
+  type        = string
+}
