@@ -37,12 +37,30 @@ pipeline {
     }
 }
 
-        stage('Docker Build') {
-            steps {
-                dir('frontend') {
-                    bat 'docker build -t devops-frontend .'
-                }
-            }
+        
+stage('Docker Build') {
+    steps {
+        dir('frontend') {
+            bat 'docker build -t ghcr.io/janani-k-s/devops-frontend:latest .'
         }
+    }
+}
+
+stage('Push to GHCR') {
+    steps {
+        withCredentials([
+            usernamePassword(
+                credentialsId: 'ghcr-credentials',
+                usernameVariable: 'GHCR_USERNAME',
+                passwordVariable: 'GHCR_TOKEN'
+            )
+        ]) {
+            bat 'echo %GHCR_TOKEN% | docker login ghcr.io -u %GHCR_USERNAME% --password-stdin'
+            bat 'docker push ghcr.io/janani-k-s/devops-frontend:latest'
+            bat 'docker logout ghcr.io'
+        }
+    }
+}
+
     }
 }
