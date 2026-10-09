@@ -27,10 +27,11 @@ pipeline {
         }
         stage('Terraform Plan') {
     steps {
-        withCredentials([
-            string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
-            string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
-        ]) {
+         withCredentials([
+    string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
+    string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY'),
+    string(credentialsId: 'ssh-allowed-cidr', variable: 'TF_VAR_ssh_allowed_cidr')
+]){
             bat 'set AWS_DEFAULT_REGION=us-east-1 && terraform plan -input=false'
         }
     }
